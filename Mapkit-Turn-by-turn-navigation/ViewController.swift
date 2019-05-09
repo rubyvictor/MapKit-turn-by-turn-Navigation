@@ -21,6 +21,15 @@ class ViewController: UIViewController {
     //MARK: - Step three Store User Coordinates
     var currentCoordinates: CLLocationCoordinate2D!
     
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        //MARK: - Step one setup
+        setupLocationManager()
+    }
+    
     fileprivate func setupLocationManager() {
         locationManager.requestAlwaysAuthorization()
         locationManager.delegate = self
@@ -28,11 +37,8 @@ class ViewController: UIViewController {
         locationManager.startUpdatingLocation()
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    func getDirections(to destination: MKPlacemark) {
         
-        //MARK: - Step one setup
-        setupLocationManager()
     }
 }
 
@@ -52,7 +58,25 @@ extension ViewController: CLLocationManagerDelegate {
 
 extension ViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        print("")
+        //MARK: - Step six create search request
+        let localSearchRequest = MKLocalSearch.Request()
+        localSearchRequest.naturalLanguageQuery = searchBar.text
+        //MARK: - Step seven set up region with span
+        let region = MKCoordinateRegion(center: currentCoordinates, span: MKCoordinateSpan.init(latitudeDelta: 0.1, longitudeDelta: 0.1))
+        
+        localSearchRequest.region = region
+        let localSearch = MKLocalSearch(request: localSearchRequest)
+        //MARK: - Step eight start local search
+        localSearch.start { [weak self] (response, error) in
+            if let error = error {
+                return
+            }
+            //MARK: - Step nine get the map items from search response
+            guard let response = response else { return }
+            print(response.mapItems)
+            guard let firstMapItem = response.mapItems.first else { return }
+            self?.getDirections(to: firstMapItem.placemark)
+        }
     }
 }
 
