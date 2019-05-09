@@ -9,6 +9,7 @@
 import UIKit
 import MapKit
 import CoreLocation
+import AVFoundation
 
 class ViewController: UIViewController {
 
@@ -21,8 +22,9 @@ class ViewController: UIViewController {
     //MARK: - Step three Store User Coordinates
     var currentCoordinates: CLLocationCoordinate2D!
     var steps = [MKRoute.Step]()
+    let speechSynthesizer = AVSpeechSynthesizer()
     
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -64,8 +66,31 @@ class ViewController: UIViewController {
             //MARK: - Step fifteen Save the steps to an empty array
             self?.steps = mainRoute.steps
             
+            //MARK: - Step nineteen Before starting Monitoring, must remove monitoring regions
+            self?.locationManager.monitoredRegions.forEach({ self?.locationManager.stopMonitoring(for: $0)
+            })
             
-            
+            //MARk: - Step seventeen create Geofences On Polyline steps
+            for i in 0..<mainRoute.steps.count {
+                let step = mainRoute.steps[i]
+                print(step.instructions)
+                print(step.distance)
+                let region = CLCircularRegion(center: step.polyline.coordinate, radius: 20, identifier: "\(i)")
+                
+                //MARK: - Step eighteen start monitoring region
+                self?.locationManager.startMonitoring(for: region)
+                
+                //MARK: - Step twenty initialize add circle overlay for region
+                let circle = MKCircle(center: region.center, radius: region.radius)
+                self?.mapView.addOverlay(circle)
+            }
+            //MARK: - Step twenty two create message to update directionsLabel for each step
+            let initialMessage = "In \(self?.steps[0].distance ?? 0) metres, \(self?.steps[0].instructions ?? "") then in \(self?.steps[1].distance ?? 0) metres, \(self?.steps[1].instructions ?? "")"
+            self?.directionsLabel.text = initialMessage
+        
+            //MARK: - Step twenty three create speechUtterance for each message
+            let speechUtterance = AVSpeechUtterance(string: initialMessage)
+            self?.speechSynthesizer.speak(speechUtterance)
         }
         
     }
@@ -117,6 +142,15 @@ extension ViewController: MKMapViewDelegate {
             let renderer = MKPolylineRenderer(overlay: overlay)
             renderer.strokeColor = .blue
             renderer.lineWidth = 10
+            return renderer
+        }
+        
+        //MARK: - Step twenty one check renderer for region circle
+        if overlay is MKCircle {
+            let renderer = MKCircleRenderer(overlay: overlay)
+            renderer.strokeColor = .orange
+            renderer.fillColor = .red
+            renderer.alpha = 0.5
             return renderer
         }
         
