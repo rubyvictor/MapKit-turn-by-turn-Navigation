@@ -20,7 +20,7 @@ class ViewController: UIViewController {
     
     //MARK: - Step three Store User Coordinates
     var currentCoordinates: CLLocationCoordinate2D!
-    
+    var steps = [MKRoute.Step]()
     
     
     override func viewDidLoad() {
@@ -37,7 +37,36 @@ class ViewController: UIViewController {
         locationManager.startUpdatingLocation()
     }
     
-    func getDirections(to destination: MKPlacemark) {
+    func getDirections(to destination: MKMapItem) {
+        //MARK: - Step ten Initialize placemark of current coordinates and initialize mapItem with it
+        let sourcePlacemark = MKPlacemark(coordinate: currentCoordinates)
+        let sourceMapItem = MKMapItem(placemark: sourcePlacemark)
+        let directionRequest = MKDirections.Request()
+        //MARK: - Step eleven set up direction for source and destination
+        directionRequest.source = sourceMapItem
+        directionRequest.destination = destination
+        //MARK: - Step twelve set up transport type
+        directionRequest.transportType = .automobile
+        
+        //MARK: - Step thirteen Initialize directions
+        let directions = MKDirections(request: directionRequest)
+        directions.calculate { [weak self] (response, error) in
+            if let error = error {
+                return
+            }
+            
+            guard let response = response else { return }
+            guard let mainRoute = response.routes.first else { return }
+            
+            
+            //MARk: - Step fourteen Add polyline overlay to mapView
+            self?.mapView.addOverlay(mainRoute.polyline)
+            //MARK: - Step fifteen Save the steps to an empty array
+            self?.steps = mainRoute.steps
+            
+            
+            
+        }
         
     }
 }
@@ -75,13 +104,22 @@ extension ViewController: UISearchBarDelegate {
             guard let response = response else { return }
             print(response.mapItems)
             guard let firstMapItem = response.mapItems.first else { return }
-            self?.getDirections(to: firstMapItem.placemark)
+            self?.getDirections(to: firstMapItem)
         }
     }
 }
 
 extension ViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        
+        //MARK: - step sixteen create renderer for polyline overlay
+        if overlay is MKPolyline {
+            let renderer = MKPolylineRenderer(overlay: overlay)
+            renderer.strokeColor = .blue
+            renderer.lineWidth = 10
+            return renderer
+        }
+        
         return MKOverlayRenderer()
     }
 }
