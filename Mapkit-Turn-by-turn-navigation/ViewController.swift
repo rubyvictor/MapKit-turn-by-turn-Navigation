@@ -23,7 +23,7 @@ class ViewController: UIViewController {
     var currentCoordinates: CLLocationCoordinate2D!
     var steps = [MKRoute.Step]()
     let speechSynthesizer = AVSpeechSynthesizer()
-    
+    var stepCounter = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -91,6 +91,7 @@ class ViewController: UIViewController {
             //MARK: - Step twenty three create speechUtterance for each message
             let speechUtterance = AVSpeechUtterance(string: initialMessage)
             self?.speechSynthesizer.speak(speechUtterance)
+            self?.stepCounter += 1
         }
         
     }
@@ -105,7 +106,28 @@ extension ViewController: CLLocationManagerDelegate {
         currentCoordinates = currentLocation.coordinate
         //MARK: - Step five set heading to track user direction
         mapView.userTrackingMode = .followWithHeading
-        
+    }
+    
+    //MARK: - Step twenty four
+    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
+        print("Entered region!")
+        stepCounter += 1
+        if stepCounter < steps.count {
+            let currentStep = steps[stepCounter]
+            let message = "In \(currentStep.distance) metres, \(currentStep.instructions)"
+            self.directionsLabel.text = message
+            let speechUtterance = AVSpeechUtterance(string: message)
+            speechSynthesizer.speak(speechUtterance)
+        } else {
+            let message = "Arrived at destination"
+            directionsLabel.text = message
+            let speechUtterance = AVSpeechUtterance(string: message)
+            speechSynthesizer.speak(speechUtterance)
+            stepCounter = 0
+            self.locationManager.monitoredRegions.forEach { self.locationManager.stopMonitoring(for: $0)
+            }
+            
+        }
         
     }
 }
