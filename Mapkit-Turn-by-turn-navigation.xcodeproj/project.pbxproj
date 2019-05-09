@@ -13,6 +13,7 @@
 		B1137F1D2284722600C0168E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1137F1C2284722600C0168E /* Assets.xcassets */; };
 		B1137F202284722600C0168E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B1137F1E2284722600C0168E /* LaunchScreen.storyboard */; };
 		B1137F2B2284722600C0168E /* Mapkit_Turn_by_turn_navigationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1137F2A2284722600C0168E /* Mapkit_Turn_by_turn_navigationTests.swift */; };
+		B1137F372284724900C0168E /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1137F362284724900C0168E /* MapKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +37,8 @@
 		B1137F262284722600C0168E /* Mapkit-Turn-by-turn-navigationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Mapkit-Turn-by-turn-navigationTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1137F2A2284722600C0168E /* Mapkit_Turn_by_turn_navigationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mapkit_Turn_by_turn_navigationTests.swift; sourceTree = "<group>"; };
 		B1137F2C2284722600C0168E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B1137F362284724900C0168E /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		B1137F3822847B9B00C0168E /* ScienceCentre.gpx */ = {isa = PBXFileReference; lastKnownFileType = text; path = ScienceCentre.gpx; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B1137F372284724900C0168E /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,9 +63,11 @@
 		B1137F092284722400C0168E = {
 			isa = PBXGroup;
 			children = (
+				B1137F3822847B9B00C0168E /* ScienceCentre.gpx */,
 				B1137F142284722400C0168E /* Mapkit-Turn-by-turn-navigation */,
 				B1137F292284722600C0168E /* Mapkit-Turn-by-turn-navigationTests */,
 				B1137F132284722400C0168E /* Products */,
+				B1137F352284724900C0168E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -94,6 +100,14 @@
 				B1137F2C2284722600C0168E /* Info.plist */,
 			);
 			path = "Mapkit-Turn-by-turn-navigationTests";
+			sourceTree = "<group>";
+		};
+		B1137F352284724900C0168E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B1137F362284724900C0168E /* MapKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -146,6 +160,14 @@
 				TargetAttributes = {
 					B1137F112284722400C0168E = {
 						CreatedOnToolsVersion = 10.2.1;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Maps.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 					B1137F252284722600C0168E = {
 						CreatedOnToolsVersion = 10.2.1;
